@@ -1,5 +1,5 @@
 {
-  "name": "chat-app",
+  "name": "webchatapp-frontend",
   "version": "1.0.0",
   "description": "",
   "keywords": [],
@@ -14,6 +14,7 @@
     "react-router-dom": "5.2.0",
     "react-scripts": "3.4.3",
     "socket.io-client": "3.0.3",
+    "sweetalert": "2.1.2",
     "web-vitals": "1.0.1",
     "xmlhttprequest-ssl": "1.6.0"
   },

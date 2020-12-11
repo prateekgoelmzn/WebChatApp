@@ -1,13 +1,14 @@
 import React, { useState, useEffect } from "react";
 import { Redirect } from "react-router-dom";
 import axios from "axios";
-import cryptojs from "crypto-js";
+import dataOpr from "../util";
 import "../App.css";
 
 const Room = ({ socket }) => {
   const [userData, setUserData] = useState({});
   const [redirect, setRedirect] = useState(false);
   const [serverUp, setServerUp] = useState(false);
+  const [playredirect, setPlayredirect] = useState(false);
 
   const handleNameChange = (e) => {
     const name = e.target.value;
@@ -20,14 +21,24 @@ const Room = ({ socket }) => {
   };
 
   const handleClick = (e) => {
+    //console.log(userData);
     e.preventDefault();
+    //console.log(userData);
     if (userData.name && userData.room) {
       setRedirect(true);
-      let ciphertext = cryptojs.AES.encrypt(
-        JSON.stringify(userData),
-        "<Enter Your Secret Key>"
-      ).toString();
+      let ciphertext = dataOpr.encrypt(userData);
       socket.emit("join-room", ciphertext);
+    } else {
+      alert("Please fill required details!");
+    }
+  };
+
+  const handlePlay = (e) => {
+    e.preventDefault();
+    if (userData.name && userData.room) {
+      setPlayredirect(true);
+      let ciphertext = dataOpr.encrypt(userData);
+      socket.emit("join-play-room", ciphertext);
     } else {
       alert("Please fill required details!");
     }
@@ -35,8 +46,9 @@ const Room = ({ socket }) => {
 
   const fetch = () => {
     axios
-      .get("<Backend url>")
+      .get("server url")
       .then((result) => {
+        //console.log(result.status);
         setServerUp(true);
       })
       .catch((err) => {
@@ -75,14 +87,33 @@ const Room = ({ socket }) => {
               onChange={handleRoomChange}
             />
           </div>
-          <button className="btn btn-primary" onClick={handleClick}>
-            Enter
+          <button
+            className="btn btn-primary btn-lg btn-block"
+            onClick={handleClick}
+          >
+            Enter Chat Room
+          </button>
+          <button
+            className="btn btn-primary btn-lg btn-block"
+            onClick={handlePlay}
+          >
+            Play tic tac toe
           </button>
         </form>
         {serverUp === true && redirect === true ? (
           <Redirect
             to={{
               pathname: "/info",
+              data: userData
+            }}
+          />
+        ) : (
+          ""
+        )}
+        {serverUp === true && playredirect === true ? (
+          <Redirect
+            to={{
+              pathname: "/tic-tac-toe",
               data: userData
             }}
           />

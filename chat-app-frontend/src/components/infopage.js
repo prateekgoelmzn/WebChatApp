@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import { Redirect } from "react-router-dom";
-import cryptojs from "crypto-js";
+import dataOpr from "../util";
+//import ReactDOM from 'react-dom';
 import "../App.css";
 
 const Infopage = ({ socket }) => {
@@ -18,7 +19,9 @@ const Infopage = ({ socket }) => {
   const [message, setMessage] = useState([]);
   const [usersInRoom, setUsersInRoom] = useState([]);
   const [socketId, setSocketId] = useState("");
+  const [roomname, setRoomname] = useState("");
   const [redirect, setRedirect] = useState(false);
+  const [toggle, setToggle] = useState(false);
 
   const handleChange = (e) => {
     setUserText(e.target.value);
@@ -26,16 +29,12 @@ const Infopage = ({ socket }) => {
 
   const handleClick = (e) => {
     e.preventDefault();
+    //console.log(userText);
     if (userText !== "") {
-      socket.emit(
-        "user-text",
-        cryptojs.AES.encrypt(
-          JSON.stringify(userText),
-          "<Enter Your Secret Key>"
-        ).toString()
-      );
+      socket.emit("user-text", dataOpr.encrypt(userText));
       setUserText("");
     }
+    //scrollToBottom();
   };
 
   const leaveRoom = (e) => {
@@ -48,19 +47,17 @@ const Infopage = ({ socket }) => {
     if (!socket) return;
 
     socket.on("join-room-message", (cipherData) => {
-      let bytes = cryptojs.AES.decrypt(cipherData, "<Enter Your Secret Key>");
-      let infoObj = JSON.parse(bytes.toString(cryptojs.enc.Utf8));
+      let infoObj = dataOpr.decrypt(cipherData);
       setMessage([...message, infoObj.name]);
       setSocketId(infoObj.socketId);
+      setRoomname(infoObj.roomname);
     });
     socket.on("users-in-room", (cipherData) => {
-      let bytes = cryptojs.AES.decrypt(cipherData, "<Enter Your Secret Key>");
-      let users = JSON.parse(bytes.toString(cryptojs.enc.Utf8));
+      let users = dataOpr.decrypt(cipherData);
       setUsersInRoom([...users]);
     });
     socket.on("another-user-text", (cipherData) => {
-      let bytes = cryptojs.AES.decrypt(cipherData, "<Enter Your Secret Key>");
-      let textObj = JSON.parse(bytes.toString(cryptojs.enc.Utf8));
+      let textObj = dataOpr.decrypt(cipherData);
       setUserTexts([...userTexts, textObj]);
     });
     return () => {
@@ -68,18 +65,31 @@ const Infopage = ({ socket }) => {
     };
   });
 
+  /*  
   const openNav = () => {
     document.getElementById("mySidebar").style.width = "250px";
   };
-
+*/
   const closeNav = () => {
     document.getElementById("mySidebar").style.width = "0";
   };
 
+  const toggleNav = () => {
+    if (toggle === false) {
+      document.getElementById("mySidebar").style.width = "250px";
+      setToggle(true);
+    } else if (toggle === true) {
+      document.getElementById("mySidebar").style.width = "0";
+      setToggle(false);
+    }
+  };
+
+  //whenever userTexts updated
   useEffect(() => {
     scrollToBottom();
   }, [userTexts]);
 
+  //initial mount
   useEffect(() => {
     scrollToBottom();
   }, []);
@@ -87,9 +97,12 @@ const Infopage = ({ socket }) => {
   return (
     <div>
       <div id="mySidebar" className="sidebar mt-ud">
-        <a href="javascript:void(0)" className="closebtn" onClick={closeNav}>
-          ×
-        </a>
+        {
+          // eslint-disable-next-line
+          <a href="javascript:void(0)" className="closebtn" onClick={closeNav}>
+            ×
+          </a>
+        }
         <span className="badge badge-primary">
           <svg
             width="5em"
@@ -145,7 +158,9 @@ const Infopage = ({ socket }) => {
           );
         })}
 
-        <button onClick={openNav} className="btn btn-primary" type="button">
+        <h4>{`Room : ${roomname}`}</h4>
+
+        <button onClick={toggleNav} className="btn btn-primary" type="button">
           <svg
             width="1em"
             height="1em"
@@ -216,21 +231,26 @@ const Infopage = ({ socket }) => {
       <div>
         {userTexts.map((ele, idx) => {
           let color = "text-dark";
-          let position = "ml-3 text-left";
-          let msg = ele.msg;
+          let position = "containerw3-left";
+          let time_position = "time-left";
+          let msg = `${ele.username} : ${ele.msg}`;
           if (ele.type === "left") {
             color = "text-danger";
+            msg = ele.msg;
           } else if (ele.type === "join") {
             color = "text-success";
+            msg = ele.msg;
           }
           if (socketId === ele.socketId) {
-            position = "mr-3 text-right";
-            msg = ele.msg.split(":")[1].trim();
+            position = "containerw3-right";
+            time_position = "time-right";
+            msg = ele.msg;
           }
           return (
-            <p className={`${position} ${color}`} key={idx}>
-              {msg}
-            </p>
+            <div className={`${position} ${color}`} key={idx}>
+              <p>{msg}</p>
+              <span className={`${time_position}`}>{ele.time}</span>
+            </div>
           );
         })}
       </div>

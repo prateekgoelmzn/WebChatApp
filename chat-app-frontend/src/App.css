@@ -68,6 +68,7 @@
   background-color: #444;
 }
 
+/* On smaller screens, where height is less than 450px, change the style of the sidenav (less padding and a smaller font size) */
 @media screen and (max-height: 450px) {
   .sidebar {
     padding-top: 15px;
@@ -78,4 +79,63 @@
   .sidebar p {
     font-size: 18px;
   }
+}
+
+.containerw3-right {
+  border: 2px solid #dedede;
+  background-color: #f1f1f1;
+  border-radius: 15px 0 0 15px;
+  padding: 5px;
+  margin-left: 55%;
+  margin-bottom: 1%;
+  max-width: 45%;
+  overflow-wrap: break-word;
+  margin-right: 1%;
+}
+
+.containerw3-left {
+  border: 2px solid #dedede;
+  background-color: #f1f1f1;
+  border-radius: 0 15px 15px 0;
+  padding: 5px;
+  max-width: 45%;
+  margin-bottom: 1%;
+  overflow-wrap: break-word;
+  margin-left: 1%;
+}
+
+.darker {
+  border-color: #ccc;
+  background-color: #ddd;
+}
+
+.containerw3-left::after {
+  content: "";
+  clear: both;
+  display: table;
+}
+.containerw3-right::after {
+  content: "";
+  clear: both;
+  display: table;
+}
+
+.time-right {
+  float: right;
+  color: #aaa;
+  font-size: smaller;
+}
+
+.time-left {
+  float: left;
+  color: #999;
+  font-size: smaller;
+}
+
+.you {
+  color: green;
+}
+
+.opponent {
+  color: brown;
 }

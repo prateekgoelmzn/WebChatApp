@@ -3,10 +3,11 @@ import React from "react";
 import socketIOClient from "socket.io-client";
 import Router from "./Router";
 
-const ENDPOINT = "<Enter Your Backend EndPoint>";
-let socket = socketIOClient(ENDPOINT);
+const ENDPOINT2 = "server url";
+let socket = socketIOClient(ENDPOINT2);
 
 function App() {
+  console.clear();
   return (
     <div>
       <Router socket={socket} />

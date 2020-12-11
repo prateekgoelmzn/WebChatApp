@@ -1,0 +1,42 @@
+.box{
+    width: 100%;
+    height: 100%;
+    font-size: 30px;
+    background-color: white;
+    color: black;
+    outline: none;
+    cursor: pointer;
+    font-weight: "800";
+}
+
+.l{
+    border-left: 2px solid white;
+}
+
+.r{
+    border-right: 2px solid white;
+}
+
+.t{
+    border-top: 2px solid white;
+}
+
+.b{
+    border-bottom: 2px solid white;
+}
+
+button {
+    outline: none;
+    border: 4px solid green;
+    padding: 10px 20px;
+    font-size: 1rem;
+    font-weight: bold;
+    background: none;
+    transition: all 0.2s ease-in-out;
+  }
+  
+  button:hover {
+    cursor: pointer;
+    background: green;
+    color: white;
+  }
